@@ -77,6 +77,15 @@ void arranque(){
     cargarRamEnRam();
 }
 
+int sacarLinea(int bin){
+    int linea= (bin - sacarEtiqueta(bin) * 100000)/1000;
+    return linea;
+}
+
+int sacarEtiqueta(int bin){
+    return (int) (bin / 100000);
+}
+
 int main(){
     int *accesosAmemoria;
     tiempoglobal = numerofallos = 0;
@@ -85,6 +94,6 @@ int main(){
     accesosAmemoria = peticiones_de_lectura();
 
     printf("Test RAM: %d, Test Lectura: %s", RAM[1], toCadena(accesosAmemoria[2]));
-
+    printf("Line: %d Etiqueta: %d", sacarLinea(accesosAmemoria[2]) , sacarEtiqueta(accesosAmemoria[2]));
     return 0;
 }
