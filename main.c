@@ -106,16 +106,16 @@ int aDecimal(int bin){
 void cargarDeRam(int bin){
     int linea = aDecimal(sacarLinea(bin));
     int pos = aDecimal(sacarLinea(bin)*1000 + sacarEtiqueta(bin)*100000);
-    printf("posicion: %d \n", pos);
+    printf("Cargado bloque: %04X en Linea: %02X\n", pos,linea);
     cahce[linea].ETQ = aDecimal(sacarEtiqueta(bin));
     for (int i = 0; i < TAMANIO_LINEA; i++)
-        cahce[linea].Datos[i] = RAM[pos + i];
+        cahce[linea].Datos[TAMANIO_LINEA - 1 - i] = RAM[pos + i];
 }
 void mostrarCache(){
     for(int j = 0; j < CANTIDAD_LINEAS; j++){
-        printf("Etiqueta: %d Datos: " , cahce[j].ETQ);
+        printf("ETQ:%X Datos " , cahce[j].ETQ);
         for(int i = 0; i < TAMANIO_LINEA; i++)
-            printf(" %d ", cahce[j].Datos[i]);
+            printf(" %02X ", cahce[j].Datos[i]);
         printf("\n");
     }
 }
@@ -127,10 +127,10 @@ int main(){
     arranque();
     accesosAmemoria = peticiones_de_lectura();
 
-    int ACESOA = 8;
+    int ACESOA = 10;
 
-    printf("Test RAM: %d, Test Lectura: %s", RAM[1], toCadena(accesosAmemoria[ACESOA]));
-    printf("Line: %d Etiqueta: %d \n", sacarLinea(accesosAmemoria[ACESOA]) , sacarEtiqueta(accesosAmemoria[ACESOA]));
+    printf("Test RAM: %X, Test Lectura: %s", RAM[1], toCadena(accesosAmemoria[ACESOA]));
+    printf("Line: %02X Etiqueta: %02X \n", sacarLinea(accesosAmemoria[ACESOA]) , sacarEtiqueta(accesosAmemoria[ACESOA]));
 
     mostrarCache();
     cargarDeRam(accesosAmemoria[ACESOA]);
