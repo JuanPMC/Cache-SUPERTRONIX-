@@ -15,6 +15,14 @@ unsigned char RAM[TAMANIO_RAM];
 
 int tiempoglobal, numerofallos;
 
+char texto[100];
+int posicionTexto;
+
+void inicializarTexto(){
+    for(int i; i < 100; i++)
+        texto[i] = '/0';
+}
+
 void cargarRamEnRam(){
     FILE *ramBinary;
     ramBinary = fopen("RAM.bin","rb");  // r para leer y b de binario
@@ -106,10 +114,12 @@ int aDecimal(int bin){
 void cargarDeRam(int bin){
     int linea = aDecimal(sacarLinea(bin));
     int pos = aDecimal(sacarLinea(bin)*1000 + sacarEtiqueta(bin)*100000);
+    printf("T:  %d,  Fallo  de  CACHE  %d,  ADDR  %04X  ETQ  %X  linea  %02X palabra %02X bloque %02X", tiempoglobal, numerofallos, aDecimal(bin),aDecimal(sacarEtiqueta(bin)),aDecimal(sacarLinea(bin)),aDecimal(sacarPalabra(bin)), pos);
     printf("Cargado bloque: %04X en Linea: %02X\n", pos,linea);
     cahce[linea].ETQ = aDecimal(sacarEtiqueta(bin));
     for (int i = 0; i < TAMANIO_LINEA; i++)
         cahce[linea].Datos[TAMANIO_LINEA - 1 - i] = RAM[pos + i];
+
 }
 void mostrarCache(){
     for(int j = 0; j < CANTIDAD_LINEAS; j++){
@@ -119,7 +129,23 @@ void mostrarCache(){
         printf("\n");
     }
 }
-
+void comprobarSiEsta(int bin){
+    if(cahce[aDecimal(sacarLinea(bin))].ETQ == aDecimal(sacarEtiqueta(bin))){
+        cogerDato(bin);
+        tiempoglobal++;
+    }else{
+        numerofallos++;
+        cargarDeRam(bin);
+        tiempoglobal += 10;
+        comprobarSiEsta(bin);
+    }
+}
+void cogerDato(int bin){
+    int dato = cahce[aDecimal(sacarLinea(bin))].Datos[aDecimal(sacarPalabra(bin))];
+    texto[posicionTexto] = (char) dato;
+    printf("T: %d, Acierto de CACHE, ADDR %04X ETQ %X linea %02X palabra %02X DATO %02X \n",tiempoglobal,aDecimal(bin),aDecimal(sacarEtiqueta(bin)),aDecimal(sacarLinea(bin)),aDecimal(sacarPalabra(bin)),dato);
+    mostrarCache();
+}
 int main(){
     int *accesosAmemoria;
     tiempoglobal = numerofallos = 0;
@@ -127,14 +153,8 @@ int main(){
     arranque();
     accesosAmemoria = peticiones_de_lectura();
 
-    int ACESOA = 10;
-
-    printf("Test RAM: %X, Test Lectura: %s", RAM[1], toCadena(accesosAmemoria[ACESOA]));
-    printf("Line: %02X Etiqueta: %02X \n", sacarLinea(accesosAmemoria[ACESOA]) , sacarEtiqueta(accesosAmemoria[ACESOA]));
-
-    mostrarCache();
-    cargarDeRam(accesosAmemoria[ACESOA]);
-    mostrarCache();
+    for( int i = 0; accesosAmemoria[i] != -1; i++)
+        comprobarSiEsta(accesosAmemoria[i]);
 
     return 0;
 }
