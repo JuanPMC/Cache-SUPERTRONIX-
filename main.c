@@ -21,11 +21,6 @@ void cargarRamEnRam(){
     fread(RAM,TAMANIO_RAM,1,ramBinary); // leer el fichero y cargarlo en la ram
     fclose(ramBinary);
 }
-char* toCadena(int bin){
-    static char snum[11];
-    sprintf(snum,"%d", bin);
-    return snum;
-}
 int decimal_a_binario(int dec){//Con esta funcion nos va a salir el binario empezando por el primer 1 de mayor orden
     int rem, c = 1;
     int bin = 0;
@@ -36,6 +31,22 @@ int decimal_a_binario(int dec){//Con esta funcion nos va a salir el binario empe
         c = c * 10;
     }
     return bin;
+}
+char* toCadena(int bin){
+    static char snum[11];
+    sprintf(snum,"%d", bin);
+    return snum;
+}
+int sacarEtiqueta(int bin){
+    return (int) (bin / 100000);
+}
+int sacarLinea(int bin){
+    int linea= (bin - sacarEtiqueta(bin) * 100000)/1000;
+    return linea;
+}
+int sacarPalabra(int bin){
+    int palabra= (bin-((sacarEtiqueta(bin)*100000)+(sacarLinea(bin)*1000)));
+    return palabra;
 }
 
 int* peticiones_de_lectura(){
