@@ -88,14 +88,6 @@ void arranque(){
     cargarRamEnRam();
 }
 
-int sacarLinea(int bin){
-    int linea= (bin - sacarEtiqueta(bin) * 100000)/1000;
-    return linea;
-}
-
-int sacarEtiqueta(int bin){
-    return (int) (bin / 100000);
-}
 
 int main(){
     int *accesosAmemoria;
