@@ -21,10 +21,14 @@ void cargarRamEnRam(){
     fread(RAM,TAMANIO_RAM,1,ramBinary); // leer el fichero y cargarlo en la ram
     fclose(ramBinary);
 }
-
+char* toCadena(int bin){
+    static char snum[11];
+    sprintf(snum,"%d", bin);
+    return snum;
+}
 int decimal_a_binario(int dec){//Con esta funcion nos va a salir el binario empezando por el primer 1 de mayor orden
     int rem, c = 1;
-    long int bin = 0;
+    int bin = 0;
     while(dec > 0){
         rem = dec%2;
         dec = dec/2;
@@ -33,16 +37,11 @@ int decimal_a_binario(int dec){//Con esta funcion nos va a salir el binario empe
     }
     return bin;
 }
-char* toCadena(int bin){//Esta funcion es para pasar el entero a cadena 
-    static char snum[11];
-    sprintf(snum,"%d", bin);
-    return snum;
-}
 
-long int* peticiones_de_lectura(){
+int* peticiones_de_lectura(){
     FILE *accesomem;
     char linea[6];
-    static long int resultado[100];
+    static int resultado[100];
     int memoria;
     int i;
 
@@ -79,13 +78,13 @@ void arranque(){
 }
 
 int main(){
-    long int *accesosAmemoria;
+    int *accesosAmemoria;
     tiempoglobal = numerofallos = 0;
 
     arranque();
     accesosAmemoria = peticiones_de_lectura();
 
-    printf("Test RAM: %d, Test Lectura: %d", RAM[1], accesosAmemoria[1]);
+    printf("Test RAM: %d, Test Lectura: %s", RAM[1], toCadena(accesosAmemoria[2]));
 
     return 0;
 }
