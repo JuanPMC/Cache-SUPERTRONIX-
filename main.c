@@ -33,6 +33,11 @@ int decimal_a_binario(int dec){//Con esta funcion nos va a salir el binario empe
     }
     return bin;
 }
+char* toCadena(int bin){//Esta funcion es para pasar el entero a cadena 
+    static char snum[11];
+    sprintf(snum,"%d", bin);
+    return snum;
+}
 
 long int* peticiones_de_lectura(){
     FILE *accesomem;
