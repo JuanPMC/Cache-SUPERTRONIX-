@@ -37,13 +37,6 @@ char* toCadena(int bin){
     sprintf(snum,"%d", bin);
     return snum;
 }
-int sacarEtiqueta(int bin){
-    return (int) (bin / 100000);
-}
-int sacarLinea(int bin){
-    int linea= (bin - sacarEtiqueta(bin) * 100000)/1000;
-    return linea;
-}
 int sacarPalabra(int bin){
     int palabra= (bin-((sacarEtiqueta(bin)*100000)+(sacarLinea(bin)*1000)));
     return palabra;
@@ -88,6 +81,44 @@ void arranque(){
     cargarRamEnRam();
 }
 
+int sacarLinea(int bin){
+    int linea= (bin - sacarEtiqueta(bin) * 100000)/1000;
+    return linea;
+}
+
+int sacarEtiqueta(int bin){
+    return (int) (bin / 100000);
+}
+int pow(int num, int exp){
+    if (!exp) return 1;
+    return pow(num , exp- 1 ) * num;
+}
+int aDecimal(int bin){
+    int decim = 0;
+    int i = 0;
+    while (bin){
+        decim = bin%10 * pow(2,i);
+        bin /= 10;
+        i++;
+    }
+    return decim;
+}
+void cargarDeRam(int bin){
+    int linea = aDecimal(sacarLinea(bin));
+    int pos = aDecimal(sacarLinea(bin)*1000 + sacarEtiqueta(bin)*100000);
+    printf("posicion: %d \n", pos);
+    cahce[linea].ETQ = aDecimal(sacarEtiqueta(bin));
+    for (int i = 0; i < TAMANIO_LINEA; i++)
+        cahce[linea].Datos[i] = RAM[pos + i];
+}
+void mostrarCache(){
+    for(int j = 0; j < CANTIDAD_LINEAS; j++){
+        printf("Etiqueta: %d Datos: " , cahce[j].ETQ);
+        for(int i = 0; i < TAMANIO_LINEA; i++)
+            printf(" %d ", cahce[j].Datos[i]);
+        printf("\n");
+    }
+}
 
 int main(){
     int *accesosAmemoria;
@@ -96,7 +127,14 @@ int main(){
     arranque();
     accesosAmemoria = peticiones_de_lectura();
 
-    printf("Test RAM: %d, Test Lectura: %s", RAM[1], toCadena(accesosAmemoria[2]));
-    printf("Line: %d Etiqueta: %d", sacarLinea(accesosAmemoria[2]) , sacarEtiqueta(accesosAmemoria[2]));
+    int ACESOA = 8;
+
+    printf("Test RAM: %d, Test Lectura: %s", RAM[1], toCadena(accesosAmemoria[ACESOA]));
+    printf("Line: %d Etiqueta: %d \n", sacarLinea(accesosAmemoria[ACESOA]) , sacarEtiqueta(accesosAmemoria[ACESOA]));
+
+    mostrarCache();
+    cargarDeRam(accesosAmemoria[ACESOA]);
+    mostrarCache();
+
     return 0;
 }
