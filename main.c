@@ -40,18 +40,18 @@ int decimal_a_binario(int dec){//Con esta funcion nos va a salir el binario empe
     }
     return bin;
 }
-char* toCadena(int bin){
+char* toCadena(int bin){//En esta funcion pasamos una variable de entera a una cadena
     static char snum[11];
     sprintf(snum,"%d", bin);
     return snum;
 }
-int sacarPalabra(int bin){
+int sacarPalabra(int bin){//En esta funcion cogemos la direccion de memoria y cogemos los 3 bits correspondientes a la palabra
     int palabra= (bin-((sacarEtiqueta(bin)*100000)+(sacarLinea(bin)*1000)));
     return palabra;
 }
 
-int* peticiones_de_lectura(){
-    FILE *accesomem;
+int* peticiones_de_lectura(){//En esta funcion realizamos la lectura del fichero que contiene los accesos de memoria 
+    FILE *accesomem;         // y retornamos los valores de dentro del fichero para trabajar con ellos
     char linea[6];
     static int resultado[100];
     int memoria;
@@ -89,19 +89,19 @@ void arranque(){
     cargarRamEnRam();
 }
 
-int sacarLinea(int bin){
+int sacarLinea(int bin){//En esta funcion cogemos la direccion de memoria y cogemos los 2 bits correspondientes a la linea
     int linea= (bin - sacarEtiqueta(bin) * 100000)/1000;
     return linea;
 }
 
-int sacarEtiqueta(int bin){
+int sacarEtiqueta(int bin){//En esta funcion cogemos la direccion de memoria y cogemos los 5 bits correspondientes a la etiqueta
     return (int) (bin / 100000);
 }
 int pow(int num, int exp){
     if (!exp) return 1;
     return pow(num , exp- 1 ) * num;
 }
-int aDecimal(int bin){
+int aDecimal(int bin){//Cogemos del entero que tiene los numeros binarios como entero y los pasamos a base decimal
     int decim = 0;
     int i = 0;
     while (bin){
@@ -111,7 +111,7 @@ int aDecimal(int bin){
     }
     return decim;
 }
-void cargarDeRam(int bin){
+void cargarDeRam(int bin){//En esta funcion cargamos los datos correspondientes en la RAM
     int linea = aDecimal(sacarLinea(bin));
     int pos = aDecimal(sacarLinea(bin)*1000 + sacarEtiqueta(bin)*100000);
     printf("T:  %d,  Fallo  de  CACHE  %d,  ADDR  %04X  ETQ  %X  linea  %02X palabra %02X bloque %02X", tiempoglobal, numerofallos, aDecimal(bin),aDecimal(sacarEtiqueta(bin)),aDecimal(sacarLinea(bin)),aDecimal(sacarPalabra(bin)), pos);
@@ -121,7 +121,7 @@ void cargarDeRam(int bin){
         cahce[linea].Datos[TAMANIO_LINEA - 1 - i] = RAM[pos + i];
 
 }
-void mostrarCache(){
+void mostrarCache(){//En esta funcion se muestan los datos de la cache
     for(int j = 0; j < CANTIDAD_LINEAS; j++){
         printf("ETQ:%X Datos " , cahce[j].ETQ);
         for(int i = 0; i < TAMANIO_LINEA; i++)
@@ -129,18 +129,18 @@ void mostrarCache(){
         printf("\n");
     }
 }
-void comprobarSiEsta(int bin){
-    if(cahce[aDecimal(sacarLinea(bin))].ETQ == aDecimal(sacarEtiqueta(bin))){
+void comprobarSiEsta(int bin){//En esta funcion comprobamos si el acceso a memoria esta en la cache
+    if(cahce[aDecimal(sacarLinea(bin))].ETQ == aDecimal(sacarEtiqueta(bin))){//Si el acceso esta cogemos dicho valor 
         cogerDato(bin);
         tiempoglobal++;
-    }else{
+    }else{//Si no esta cargamos fallo y lo cargamos el acceso en la RAM
         numerofallos++;
         cargarDeRam(bin);
         tiempoglobal += 10;
         comprobarSiEsta(bin);
     }
 }
-void cogerDato(int bin){
+void cogerDato(int bin){//Esta funcion sirve para coger el dato correspondiente al acceso de la cache
     int dato = cahce[aDecimal(sacarLinea(bin))].Datos[aDecimal(sacarPalabra(bin))];
     texto[posicionTexto] = (char) dato;
     printf("T: %d, Acierto de CACHE, ADDR %04X ETQ %X linea %02X palabra %02X DATO %02X \n",tiempoglobal,aDecimal(bin),aDecimal(sacarEtiqueta(bin)),aDecimal(sacarLinea(bin)),aDecimal(sacarPalabra(bin)),dato);
