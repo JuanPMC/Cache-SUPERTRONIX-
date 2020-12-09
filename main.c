@@ -50,7 +50,7 @@ int sacarPalabra(int bin){//En esta funcion cogemos la direccion de memoria y co
     return palabra;
 }
 
-int* peticiones_de_lectura(){//En esta funcion realizamos la lectura del fichero que contiene los accesos de memoria 
+int* peticiones_de_lectura(){//En esta funcion realizamos la lectura del fichero que contiene los accesos de memoria
     FILE *accesomem;         // y retornamos los valores de dentro del fichero para trabajar con ellos
     char linea[6];
     static int resultado[100];
@@ -130,7 +130,7 @@ void mostrarCache(){//En esta funcion se muestan los datos de la cache
     }
 }
 void comprobarSiEsta(int bin){//En esta funcion comprobamos si el acceso a memoria esta en la cache
-    if(cahce[aDecimal(sacarLinea(bin))].ETQ == aDecimal(sacarEtiqueta(bin))){//Si el acceso esta cogemos dicho valor 
+    if(cahce[aDecimal(sacarLinea(bin))].ETQ == aDecimal(sacarEtiqueta(bin))){//Si el acceso esta cogemos dicho valor
         cogerDato(bin);
         tiempoglobal++;
     }else{//Si no esta cargamos fallo y lo cargamos el acceso en la RAM
@@ -150,10 +150,10 @@ int main(){
     int *accesosAmemoria;
     tiempoglobal = numerofallos = 0;
 
-    arranque();
-    accesosAmemoria = peticiones_de_lectura();
+    arranque(); // arrancamos
+    accesosAmemoria = peticiones_de_lectura(); // cargamos las lecturas
 
-    for( int i = 0; accesosAmemoria[i] != -1; i++)
+    for( int i = 0; accesosAmemoria[i] != -1; i++)  // realizamos las lecturas de todas las direcciones
         comprobarSiEsta(accesosAmemoria[i]);
 
     return 0;
